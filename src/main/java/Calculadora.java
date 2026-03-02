@@ -1,5 +1,9 @@
 public class Calculadora {
 
+    public Calculadora() {
+        System.out.println("Nova calculadora");
+    }
+
     public int soma(int a, int b) {
         return a + b;
     }

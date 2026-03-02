@@ -1,4 +1,8 @@
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -6,15 +10,38 @@ import java.util.List;
 
 public class CalculadoraTest {
 
-    Calculadora calculadora = new Calculadora();
+    private Calculadora calculadora = new Calculadora();
+    private static int contador = 0;
+
+    @BeforeEach
+    public void setUp() {
+        System.out.println("^^^");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        System.out.println("vvv");
+    }
+
+    @BeforeAll
+    public static void setUpAll() {
+        System.out.println("--- Before All ---");
+    }
+
+    @AfterAll
+    public static void tearDownAll() {
+        System.out.println("--- After All ---");
+    }
 
     @Test
     public void testSoma() {
+        System.out.println(++contador);
         Assertions.assertTrue(calculadora.soma(2, 2) == 4);
     }
 
     @Test
     public void assertivas() {
+        System.out.println(++contador);
         Assertions.assertEquals("Casa", "Casa");
         Assertions.assertNotEquals("Casa", "casa");
         Assertions.assertTrue("casa".equalsIgnoreCase("CASA"));
@@ -34,12 +61,14 @@ public class CalculadoraTest {
 
     @Test
     public void deveRetornarNumeroInteiroNaDivisao() {
+        System.out.println(++contador);
         float resultado = calculadora.dividir(6, 2);
         Assertions.assertEquals(3, resultado);
     }
 
     @Test
     public void deveRetornarNumeroNegativoNaDivisao() {
+        System.out.println(++contador);
         float resultado = calculadora.dividir(6, -2);
         Assertions.assertEquals(-3, resultado);
     }
