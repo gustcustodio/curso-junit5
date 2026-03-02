@@ -4,4 +4,8 @@ public class Calculadora {
         return a + b;
     }
 
+    public float dividir(int a, int b) {
+        return (float) a / b;
+    }
+
 }
