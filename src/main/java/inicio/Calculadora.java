@@ -1,3 +1,5 @@
+package inicio;
+
 public class Calculadora {
 
     public Calculadora() {
