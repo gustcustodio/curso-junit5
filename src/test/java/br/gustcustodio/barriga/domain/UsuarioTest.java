@@ -1,5 +1,6 @@
 package br.gustcustodio.barriga.domain;
 
+import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,15 @@ public class UsuarioTest {
                 () -> assertEquals("usuario@email.com", usuario.getEmail()),
                 () -> assertEquals("123456", usuario.getSenha())
         );
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar usuário sem nome")
+    public void deveRejeitarUsuarioSemNome() {
+        ValidationException exception = Assertions.assertThrows(ValidationException.class, () ->
+                new Usuario(1L, null, "usuario@email.com", "123456")
+        );
+        assertEquals("Nome é obrigatório", exception.getMessage());
     }
 
 }
