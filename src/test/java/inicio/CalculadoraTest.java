@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +107,25 @@ public class CalculadoraTest {
             float resultado = 10 / 0;
         });
         Assertions.assertEquals("/ by zero", exception.getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Teste1", "Teste2", "Teste 3"})
+    public void testStrings(String param) {
+        System.out.println(param);
+        Assertions.assertNotNull(param);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "6, 2, 3",
+            "6, -2, -3",
+            "10, 3, 3.3333332538604736",
+            "0, 2, 0"
+    })
+    public void deveDividirCorretamente(int num, int den, double res) {
+        float resultado = calculadora.dividir(num, den);
+        Assertions.assertEquals(res, resultado);
     }
 
 }
