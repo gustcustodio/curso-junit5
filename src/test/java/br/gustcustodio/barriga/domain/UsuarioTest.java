@@ -5,6 +5,8 @@ import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,6 +50,18 @@ public class UsuarioTest {
                 UsuarioBuilder.umUsuario().comSenha(null).agora()
         );
         assertEquals("Senha é obrigatória", exception.getMessage());
+    }
+
+    @ParameterizedTest(name = "[{index}] - {4}")
+    @CsvSource(value = {
+            "1, NULL, usuario@email.com, 12345678, Nome é obrigatório",
+            "1, Usuário Válido, NULL, 12345678, Email é obrigatório",
+            "1, Usuário Válido, usuario@email.com, NULL, Senha é obrigatória",
+    }, nullValues = "NULL")
+    public void deveValidarCamposObrigatorios(Long id, String nome, String email, String senha, String mensagem) {
+        ValidationException ex = Assertions.assertThrows(ValidationException.class, () ->
+                UsuarioBuilder.umUsuario().comId(id).comNome(nome).comEmail(email).comSenha(senha).agora());
+        assertEquals(mensagem, ex.getMessage());
     }
 
 }
