@@ -64,4 +64,14 @@ public class UsuarioTest {
         assertEquals(mensagem, ex.getMessage());
     }
 
+    @ParameterizedTest(name = "[{index}] - {4}")
+    @CsvFileSource(files = "src//test//resources//camposObrigatoriosUsuario.csv", nullValues = "NULL", numLinesToSkip = 1)
+    //	@ParameterizedTest
+    //	@CsvFileSource(files = "src\\test\\resources\\camposObrigatoriosUsuario.csv", nullValues = "NULL", useHeadersInDisplayName = true)
+    public void deveValidarCamposObrigatoriosComDadosExternos(Long id, String nome, String email, String senha, String mensagem) {
+        ValidationException ex = Assertions.assertThrows(ValidationException.class, () ->
+                UsuarioBuilder.umUsuario().comId(id).comNome(nome).comEmail(email).comSenha(senha).agora());
+        assertEquals(mensagem, ex.getMessage());
+    }
+
 }
