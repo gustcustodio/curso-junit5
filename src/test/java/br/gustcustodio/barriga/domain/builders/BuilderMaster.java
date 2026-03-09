@@ -1,5 +1,6 @@
 package br.gustcustodio.barriga.domain.builders;
 
+import br.gustcustodio.barriga.domain.Conta;
 import br.gustcustodio.barriga.domain.Usuario;
 
 import static java.lang.String.format;
@@ -139,7 +140,7 @@ public class BuilderMaster {
 
     public static void main(String[] args) {
         BuilderMaster master = new BuilderMaster();
-        master.gerarCodigoClasse(Usuario.class);
+        master.gerarCodigoClasse(Conta.class);
     }
 
 }
