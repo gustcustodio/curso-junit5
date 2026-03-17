@@ -29,7 +29,11 @@ public class UsuarioServiceTest {
         Mockito.when(usuarioRepository.getUserByEmail("mail@mail.com")).thenReturn(Optional.of(UsuarioBuilder.umUsuario().agora()));
 
         Optional<Usuario> user = usuarioService.getUserByEmail("mail@mail.com");
-        Assertions.assertFalse(user.isEmpty());
+        Assertions.assertTrue(user.isPresent());
+
+        Mockito.verify(usuarioRepository, Mockito.atLeastOnce()).getUserByEmail("mail@mail.com");
+        Mockito.verify(usuarioRepository, Mockito.never()).getUserByEmail("outro@mail.com");
+        Mockito.verifyNoMoreInteractions(usuarioRepository);
     }
 
 }
