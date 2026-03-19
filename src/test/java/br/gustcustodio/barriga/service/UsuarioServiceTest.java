@@ -9,6 +9,9 @@ import org.mockito.Mockito;
 
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class UsuarioServiceTest {
 
     private UsuarioService usuarioService;
@@ -26,7 +29,7 @@ public class UsuarioServiceTest {
         UsuarioRepository usuarioRepository = Mockito.mock(UsuarioRepository.class);
         usuarioService = new UsuarioService(usuarioRepository);
 
-        Mockito.when(usuarioRepository.getUserByEmail("mail@mail.com"))
+        when(usuarioRepository.getUserByEmail("mail@mail.com"))
                 .thenReturn(Optional.of(UsuarioBuilder.umUsuario().agora()), Optional.of(UsuarioBuilder.umUsuario().agora()), null);
 
         Optional<Usuario> user = usuarioService.getUserByEmail("mail@mail.com");
@@ -39,11 +42,26 @@ public class UsuarioServiceTest {
         user = usuarioService.getUserByEmail("mail@mail.com");
         System.out.println(user);
 
-        Mockito.verify(usuarioRepository, Mockito.times(3)).getUserByEmail("mail@mail.com");
-        Mockito.verify(usuarioRepository, Mockito.times(1)).getUserByEmail("mail123123@mail.com");
-//        Mockito.verify(usuarioRepository, Mockito.atLeastOnce()).getUserByEmail("mail@mail.com");
-        Mockito.verify(usuarioRepository, Mockito.never()).getUserByEmail("outro@mail.com");
+        verify(usuarioRepository, Mockito.times(3)).getUserByEmail("mail@mail.com");
+        verify(usuarioRepository, Mockito.times(1)).getUserByEmail("mail123123@mail.com");
+//      verify(usuarioRepository, Mockito.atLeastOnce()).getUserByEmail("mail@mail.com");
+        verify(usuarioRepository, Mockito.never()).getUserByEmail("outro@mail.com");
         Mockito.verifyNoMoreInteractions(usuarioRepository);
+    }
+
+    @Test
+    public void deveSalvarUsuarioComSucesso() {
+        UsuarioRepository usuarioRepository = Mockito.mock(UsuarioRepository.class);
+        usuarioService = new UsuarioService(usuarioRepository);
+        Usuario userToSave = UsuarioBuilder.umUsuario().comId(null).agora();
+
+        when(usuarioRepository.salvar(userToSave)).thenReturn(UsuarioBuilder.umUsuario().agora());
+
+        Usuario savedUser = usuarioService.salvar(userToSave);
+        Assertions.assertNotNull(savedUser.getId());
+
+        verify(usuarioRepository).getUserByEmail(userToSave.getEmail());
+//		verify(repository).salvar(userToSave);
     }
 
 }
