@@ -6,7 +6,10 @@ import br.gustcustodio.barriga.repositories.UsuarioRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
@@ -15,13 +18,15 @@ import static org.mockito.Mockito.when;
 
 public class UsuarioServiceTest {
 
-    private UsuarioService usuarioService;
+    @Mock
     private UsuarioRepository usuarioRepository;
+
+    @InjectMocks
+    private UsuarioService usuarioService;
 
     @BeforeEach
     public void setUp() {
-        usuarioRepository = Mockito.mock(UsuarioRepository.class);
-        usuarioService = new UsuarioService(usuarioRepository);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
