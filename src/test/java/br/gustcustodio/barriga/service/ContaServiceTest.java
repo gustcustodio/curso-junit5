@@ -3,6 +3,7 @@ package br.gustcustodio.barriga.service;
 import br.gustcustodio.barriga.domain.Conta;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import br.gustcustodio.barriga.repositories.ContaRepository;
+import br.gustcustodio.barriga.service.external.ContaEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 
 import static br.gustcustodio.barriga.domain.builders.ContaBuilder.umaConta;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,10 +27,14 @@ public class ContaServiceTest {
     @Mock
     private ContaRepository contaRepository;
 
+    @Mock
+    private ContaEvent contaEvent;
+
     @Test
     public void deveSalvarPrimeiraContaComSucesso() {
         Conta contaToSave = umaConta().comId(null).agora();
         when(contaRepository.salvar(contaToSave)).thenReturn(umaConta().agora());
+        doNothing().when(contaEvent).dispatch(umaConta().agora(), ContaEvent.EventType.CREATED);
         Conta savedConta = contaService.salvar(contaToSave);
         Assertions.assertNotNull(savedConta.getId());
     }
