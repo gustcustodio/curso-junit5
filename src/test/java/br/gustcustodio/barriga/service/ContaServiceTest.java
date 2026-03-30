@@ -1,6 +1,7 @@
 package br.gustcustodio.barriga.service;
 
 import br.gustcustodio.barriga.domain.Conta;
+import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import br.gustcustodio.barriga.repositories.ContaRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,10 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+
 import static br.gustcustodio.barriga.domain.builders.ContaBuilder.umaConta;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+//@MockitoSettings(strictness = Strictness.LENIENT)
 public class ContaServiceTest {
 
     @InjectMocks
@@ -22,11 +26,30 @@ public class ContaServiceTest {
     private ContaRepository contaRepository;
 
     @Test
-    public void deveSalvarContaComSucesso() {
+    public void deveSalvarPrimeiraContaComSucesso() {
         Conta contaToSave = umaConta().comId(null).agora();
         when(contaRepository.salvar(contaToSave)).thenReturn(umaConta().agora());
         Conta savedConta = contaService.salvar(contaToSave);
         Assertions.assertNotNull(savedConta.getId());
+    }
+
+    @Test
+    public void deveSalvarSegundaContaComSucesso() {
+        Conta contaToSave = umaConta().comId(null).agora();
+        when(contaRepository.obterContasPorUsuario(contaToSave.getUsuario().getId()))
+                .thenReturn(Arrays.asList(umaConta().comNome("Outra conta").agora()));
+        when(contaRepository.salvar(contaToSave)).thenReturn(umaConta().agora());
+        Conta savedConta = contaService.salvar(contaToSave);
+        Assertions.assertNotNull(savedConta.getId());
+    }
+
+    @Test
+    public void deveRejeitarContaRepetida() {
+        Conta contaToSave = umaConta().comId(null).agora();
+        when(contaRepository.obterContasPorUsuario(contaToSave.getUsuario().getId()))
+                .thenReturn(Arrays.asList(umaConta().agora()));
+        String mensagem = Assertions.assertThrows(ValidationException.class, () -> contaService.salvar(contaToSave)).getMessage();
+        Assertions.assertEquals("Usuário já possui uma conta com este nome", mensagem);
     }
 
 }
