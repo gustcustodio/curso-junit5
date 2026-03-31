@@ -5,6 +5,7 @@ import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import br.gustcustodio.barriga.repositories.ContaRepository;
 import br.gustcustodio.barriga.service.external.ContaEvent;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ContaService {
@@ -24,7 +25,8 @@ public class ContaService {
                 throw new ValidationException("Usuário já possui uma conta com este nome");
             }
         });
-        Conta contaPersistida = contaRepository.salvar(conta);
+        Conta novaConta = new Conta(conta.getId(), conta.getNome() + LocalDateTime.now(), conta.getUsuario());
+        Conta contaPersistida = contaRepository.salvar(novaConta);
         try {
             contaEvent.dispatch(contaPersistida, ContaEvent.EventType.CREATED);
         } catch (Exception e) {

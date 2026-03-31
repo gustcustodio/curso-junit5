@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -32,17 +33,18 @@ public class ContaServiceTest {
     @Test
     public void deveSalvarPrimeiraContaComSucesso() throws Exception {
         Conta contaToSave = umaConta().comId(null).agora();
-        when(contaRepository.salvar(contaToSave)).thenReturn(umaConta().agora());
+        when(contaRepository.salvar(any(Conta.class))).thenReturn(umaConta().agora());
         doNothing().when(contaEvent).dispatch(umaConta().agora(), ContaEvent.EventType.CREATED);
         Conta savedConta = contaService.salvar(contaToSave);
         Assertions.assertNotNull(savedConta.getId());
+        Mockito.verify(contaRepository).salvar(any());
     }
 
     @Test
     public void deveSalvarSegundaContaComSucesso() {
         Conta contaToSave = umaConta().comId(null).agora();
         when(contaRepository.obterContasPorUsuario(contaToSave.getUsuario().getId())).thenReturn(Arrays.asList(umaConta().comNome("Outra conta").agora()));
-        when(contaRepository.salvar(contaToSave)).thenReturn(umaConta().agora());
+        when(contaRepository.salvar(any(Conta.class))).thenReturn(umaConta().agora());
         Conta savedConta = contaService.salvar(contaToSave);
         Assertions.assertNotNull(savedConta.getId());
     }
@@ -59,7 +61,7 @@ public class ContaServiceTest {
     public void naoDeveManterContaSemEvento() throws Exception {
         Conta contaToSave = umaConta().comId(null).agora();
         Conta contaSalva = umaConta().agora();
-        when(contaRepository.salvar(contaToSave)).thenReturn(contaSalva);
+        when(contaRepository.salvar(any(Conta.class))).thenReturn(contaSalva);
         doThrow(new Exception("Falha catastrófica")).when(contaEvent).dispatch(contaSalva, ContaEvent.EventType.CREATED);
         String mensagem = Assertions.assertThrows(Exception.class, () -> contaService.salvar(contaToSave)).getMessage();
         Assertions.assertEquals("Falha na criação da conta, tente novamente", mensagem);
