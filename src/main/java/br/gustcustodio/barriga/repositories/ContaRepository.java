@@ -10,4 +10,6 @@ public interface ContaRepository {
 
     List<Conta> obterContasPorUsuario(Long usuarioId);
 
+    void delete(Conta conta);
+
 }

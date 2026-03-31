@@ -6,6 +6,6 @@ public interface ContaEvent {
 
     enum EventType {CREATED, UPDATED, DELETED}
 
-    void dispatch(Conta conta, EventType eventType);
+    void dispatch(Conta conta, EventType eventType) throws Exception;
 
 }

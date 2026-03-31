@@ -19,14 +19,18 @@ public class ContaService {
 
     public Conta salvar(Conta conta) {
         List<Conta> contas = contaRepository.obterContasPorUsuario(conta.getUsuario().getId());
-//        System.out.println(contas);
         contas.stream().forEach(contaExistente -> {
             if (conta.getNome().equalsIgnoreCase(contaExistente.getNome())) {
                 throw new ValidationException("Usuário já possui uma conta com este nome");
             }
         });
         Conta contaPersistida = contaRepository.salvar(conta);
-        contaEvent.dispatch(contaPersistida, ContaEvent.EventType.CREATED);
+        try {
+            contaEvent.dispatch(contaPersistida, ContaEvent.EventType.CREATED);
+        } catch (Exception e) {
+            contaRepository.delete(contaPersistida);
+            throw new RuntimeException("Falha na criação da conta, tente novamente");
+        }
         return contaPersistida;
     }
 
