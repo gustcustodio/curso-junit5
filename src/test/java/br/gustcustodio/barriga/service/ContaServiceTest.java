@@ -7,9 +7,7 @@ import br.gustcustodio.barriga.service.external.ContaEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -30,6 +28,9 @@ public class ContaServiceTest {
     @Mock
     private ContaEvent contaEvent;
 
+    @Captor
+    private ArgumentCaptor<Conta> contaArgumentCaptor;
+
     @Test
     public void deveSalvarPrimeiraContaComSucesso() throws Exception {
         Conta contaToSave = umaConta().comId(null).agora();
@@ -37,7 +38,9 @@ public class ContaServiceTest {
         doNothing().when(contaEvent).dispatch(umaConta().agora(), ContaEvent.EventType.CREATED);
         Conta savedConta = contaService.salvar(contaToSave);
         Assertions.assertNotNull(savedConta.getId());
-        Mockito.verify(contaRepository).salvar(any());
+        Mockito.verify(contaRepository).salvar(contaArgumentCaptor.capture());
+        Assertions.assertNull(contaArgumentCaptor.getValue().getId());
+        Assertions.assertTrue(contaArgumentCaptor.getValue().getNome().startsWith("Conta Válida"));
     }
 
     @Test
