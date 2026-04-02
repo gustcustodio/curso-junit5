@@ -2,7 +2,7 @@ package br.gustcustodio.barriga.service;
 
 import br.gustcustodio.barriga.domain.Usuario;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
-import br.gustcustodio.barriga.repositories.UsuarioRepository;
+import br.gustcustodio.barriga.service.repositories.UsuarioRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

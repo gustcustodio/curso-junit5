@@ -1,4 +1,4 @@
-package br.gustcustodio.barriga.repositories;
+package br.gustcustodio.barriga.service.repositories;
 
 import br.gustcustodio.barriga.domain.Usuario;
 

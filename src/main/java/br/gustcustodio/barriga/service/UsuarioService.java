@@ -2,7 +2,7 @@ package br.gustcustodio.barriga.service;
 
 import br.gustcustodio.barriga.domain.Usuario;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
-import br.gustcustodio.barriga.repositories.UsuarioRepository;
+import br.gustcustodio.barriga.service.repositories.UsuarioRepository;
 
 import java.util.Optional;
 

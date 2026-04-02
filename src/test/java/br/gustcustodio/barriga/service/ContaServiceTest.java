@@ -2,7 +2,7 @@ package br.gustcustodio.barriga.service;
 
 import br.gustcustodio.barriga.domain.Conta;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
-import br.gustcustodio.barriga.repositories.ContaRepository;
+import br.gustcustodio.barriga.service.repositories.ContaRepository;
 import br.gustcustodio.barriga.service.external.ContaEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
