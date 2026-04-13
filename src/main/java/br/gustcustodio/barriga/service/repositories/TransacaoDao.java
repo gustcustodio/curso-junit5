@@ -4,6 +4,6 @@ import br.gustcustodio.barriga.domain.Transacao;
 
 public interface TransacaoDao {
 
-    Transacao salver(Transacao transacao);
+    Transacao salvar(Transacao transacao);
 
 }
