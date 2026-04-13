@@ -1,15 +1,24 @@
 package br.gustcustodio.barriga.service;
 
+import br.gustcustodio.barriga.domain.Conta;
 import br.gustcustodio.barriga.domain.Transacao;
 import br.gustcustodio.barriga.domain.builders.TransacaoBuilder;
+import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import br.gustcustodio.barriga.service.repositories.TransacaoDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.util.stream.Stream;
+
+import static br.gustcustodio.barriga.domain.builders.ContaBuilder.umaConta;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -44,6 +53,27 @@ public class TransacaoServiceTest {
                             }
                     );
                 }
+        );
+    }
+
+    @ParameterizedTest(name = "{6}")
+    @MethodSource(value = "cenariosObrigatorios")
+    public void deveValidarCamposObrigatoriosAoSalvar(Long id, String descricao, Double valor,
+                                                      LocalDate data, Conta conta, Boolean status, String mensagem) {
+        String exMessage = Assertions.assertThrows(ValidationException.class, () -> {
+            Transacao transacao = TransacaoBuilder.umaTransacao().comId(id).comDescricao(descricao).comValor(valor)
+                    .comData(data).comStatus(status).comConta(conta).agora();
+            transacaoService.salvar(transacao);
+        }).getMessage();
+        Assertions.assertEquals(mensagem, exMessage);
+    }
+
+    static Stream<Arguments> cenariosObrigatorios() {
+        return Stream.of(
+                Arguments.of(1L, null, 10D, LocalDate.now(), umaConta().agora(), true, "Descrição inexistente"),
+                Arguments.of(1L, "Descrição", null, LocalDate.now(), umaConta().agora(), true, "Valor inexistente"),
+                Arguments.of(1L, "Descrição", 10D, null, umaConta().agora(), true, "Data inexistente"),
+                Arguments.of(1L, "Descrição", 10D, LocalDate.now(), null, true, "Conta inexistente")
         );
     }
 
