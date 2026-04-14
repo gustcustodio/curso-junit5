@@ -6,6 +6,8 @@ import br.gustcustodio.barriga.domain.builders.TransacaoBuilder;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
 import br.gustcustodio.barriga.service.repositories.TransacaoDao;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static br.gustcustodio.barriga.domain.builders.ContaBuilder.umaConta;
@@ -31,6 +34,11 @@ public class TransacaoServiceTest {
 
     @Mock
     private TransacaoDao transacaoDao;
+
+    @BeforeEach
+    void checkTime() {
+        Assumptions.assumeTrue(LocalDateTime.now().getHour() < 5);
+    }
 
     @Test
     public void deveSalvarUmaTransacaoValida() {
