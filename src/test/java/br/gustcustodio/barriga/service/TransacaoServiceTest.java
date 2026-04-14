@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+@EnabledIf(value = "isHoraValida")
 @ExtendWith(MockitoExtension.class)
 public class TransacaoServiceTest {
 
@@ -35,10 +37,12 @@ public class TransacaoServiceTest {
     @Mock
     private TransacaoDao transacaoDao;
 
+/*
     @BeforeEach
     void checkTime() {
         Assumptions.assumeTrue(LocalDateTime.now().getHour() < 5);
     }
+*/
 
     @Test
     public void deveSalvarUmaTransacaoValida() {
@@ -83,6 +87,10 @@ public class TransacaoServiceTest {
                 Arguments.of(1L, "Descrição", 10D, null, umaConta().agora(), true, "Data inexistente"),
                 Arguments.of(1L, "Descrição", 10D, LocalDate.now(), null, true, "Conta inexistente")
         );
+    }
+
+    public static boolean isHoraValida() {
+        return LocalDateTime.now().getHour() < 5;
     }
 
 }
