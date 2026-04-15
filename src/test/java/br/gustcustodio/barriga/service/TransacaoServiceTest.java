@@ -4,6 +4,7 @@ import br.gustcustodio.barriga.domain.Conta;
 import br.gustcustodio.barriga.domain.Transacao;
 import br.gustcustodio.barriga.domain.builders.TransacaoBuilder;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
+import br.gustcustodio.barriga.service.external.ClockService;
 import br.gustcustodio.barriga.service.repositories.TransacaoDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -39,6 +40,9 @@ public class TransacaoServiceTest {
     @Mock
     private TransacaoDao transacaoDao;
 
+    @Mock
+    private ClockService clockService;
+
 /*
     @BeforeEach
     void checkTime() {
@@ -46,39 +50,34 @@ public class TransacaoServiceTest {
     }
 */
 
+    @BeforeEach
+    void setUp() {
+        when(clockService.getCurrentTime()).thenReturn(LocalDateTime.of(2023, 1, 1, 4, 30, 15));
+    }
+
     @Test
     public void deveSalvarUmaTransacaoValida() {
         Transacao transacaoParaSalvar = TransacaoBuilder.umaTransacao().comId(null).agora();
         when(transacaoDao.salvar(transacaoParaSalvar)).thenReturn(TransacaoBuilder.umaTransacao().agora());
 
-        LocalDateTime dataDesejada = LocalDateTime.of(2023, 1, 1, 4, 30, 28);
-        System.out.println(dataDesejada);
-        System.out.println(LocalDateTime.now());
+        Transacao transacaoSalva = transacaoService.salvar(transacaoParaSalvar);
+        assertEquals(TransacaoBuilder.umaTransacao().agora(), transacaoSalva);
+        assertAll("Transacao",
+                () -> assertEquals(1L, transacaoSalva.getId()),
+                () -> assertEquals("Transação Válida", transacaoSalva.getDescricao()),
+                () -> {
+                    assertAll("Conta",
+                            () -> assertEquals("Conta Válida", transacaoSalva.getConta().getNome()),
+                            () -> {
+                                assertAll("Usuário",
+                                        () -> assertEquals("Usuário Válido", transacaoSalva.getConta().getUsuario().getNome()),
+                                        () -> assertEquals("12345678", transacaoSalva.getConta().getUsuario().getSenha())
+                                );
+                            }
+                    );
+                }
+        );
 
-        try(MockedStatic<LocalDateTime> ldt = Mockito.mockStatic(LocalDateTime.class)) {
-            ldt.when(() -> LocalDateTime.now()).thenReturn(dataDesejada);
-            System.out.println(LocalDateTime.now());
-
-            Transacao transacaoSalva = transacaoService.salvar(transacaoParaSalvar);
-            assertEquals(TransacaoBuilder.umaTransacao().agora(), transacaoSalva);
-            assertAll("Transacao",
-                    () -> assertEquals(1L, transacaoSalva.getId()),
-                    () -> assertEquals("Transação Válida", transacaoSalva.getDescricao()),
-                    () -> {
-                        assertAll("Conta",
-                                () -> assertEquals("Conta Válida", transacaoSalva.getConta().getNome()),
-                                () -> {
-                                    assertAll("Usuário",
-                                            () -> assertEquals("Usuário Válido", transacaoSalva.getConta().getUsuario().getNome()),
-                                            () -> assertEquals("12345678", transacaoSalva.getConta().getUsuario().getSenha())
-                                    );
-                                }
-                        );
-                    }
-            );
-            ldt.verify(() -> LocalDateTime.now(), Mockito.times(2));
-        }
-        System.out.println(LocalDateTime.now());
     }
 
     @ParameterizedTest(name = "{6}")

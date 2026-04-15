@@ -2,16 +2,16 @@ package br.gustcustodio.barriga.service;
 
 import br.gustcustodio.barriga.domain.Transacao;
 import br.gustcustodio.barriga.domain.exceptions.ValidationException;
+import br.gustcustodio.barriga.service.external.ClockService;
 import br.gustcustodio.barriga.service.repositories.TransacaoDao;
-
-import java.time.LocalDateTime;
 
 public class TransacaoService {
 
     private TransacaoDao transacaoDao;
+    private ClockService clockService;
 
     public Transacao salvar(Transacao transacao) {
-        if (LocalDateTime.now().getHour() > 5) throw new RuntimeException();
+        if (clockService.getCurrentTime().getHour() > 5) throw new RuntimeException();
 
         if(transacao.getDescricao() == null) throw new ValidationException("Descrição inexistente");
         if(transacao.getValor() == null) throw new ValidationException("Valor inexistente");
