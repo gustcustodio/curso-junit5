@@ -15,10 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -35,6 +32,7 @@ import static org.mockito.Mockito.when;
 public class TransacaoServiceTest {
 
     @InjectMocks
+    @Spy
     private TransacaoService transacaoService;
 
     @Mock
@@ -52,7 +50,8 @@ public class TransacaoServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(clockService.getCurrentTime()).thenReturn(LocalDateTime.of(2023, 1, 1, 4, 30, 15));
+//      when(clockService.getCurrentTime()).thenReturn(LocalDateTime.of(2023, 1, 1, 4, 30, 15));
+        when(transacaoService.getTime()).thenReturn(LocalDateTime.of(2023, 1, 1, 4, 30, 15));
     }
 
     @Test
